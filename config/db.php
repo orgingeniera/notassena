@@ -2,9 +2,9 @@
 
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=nota',
+    'dsn' => 'mysql:host=localhost;dbname=notas',
     'username' => 'root',
-    'password' => '',
+    'password' => '1002507948',
     'charset' => 'utf8',
 
     // Schema cache options (for production environment)
@@ -12,3 +12,4 @@ return [
     //'schemaCacheDuration' => 60,
     //'schemaCache' => 'cache',
 ];
+
