@@ -7,8 +7,10 @@ use app\models\NotasSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use kartik\mpdf\Pdf;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;   
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 /**
  * NotasController implements the CRUD actions for Notas model.
@@ -63,6 +65,7 @@ class NotasController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'export-pdf' => ['POST'], // Agregamos la acción para exportar a PDF
                     ],
                 ],
             ]
@@ -83,6 +86,32 @@ class NotasController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionExportPdf()
+    {
+        $searchModel = new NotasSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        $content = $this->renderPartial('_reporte_notas', [
+            'dataProvider' => $dataProvider,
+        ]);
+
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_CORE, // 'UTF-8'
+            'format' => Pdf::FORMAT_A4,
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            'destination' => Pdf::DEST_DOWNLOAD,
+            'content' => $content,
+            'cssFile' => '@webroot/css/pdf.css', // Opcional: archivo CSS para el PDF
+            'options' => ['title' => 'Reporte de Notas'],
+            'methods' => [
+                'SetHeader' => ['Reporte de Notas'],
+                'SetFooter' => ['|Página {PAGENO}|'],
+            ]
+        ]);
+
+        return $pdf->render();
     }
 
     /**
