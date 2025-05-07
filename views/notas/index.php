@@ -13,30 +13,55 @@ use yii\grid\GridView;
 $this->title = 'Notas';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="notas-index">
 
-<h1><?= Html::encode($this->title) ?></h1>
 
-<p>
-    <?= Html::a('Create Notas', ['create'], ['class' => 'btn btn-success']) ?>
-    <?= Html::beginForm(['export-pdf'], 'post') ?>
-        <?= Html::submitButton('Exportar a PDF', ['class' => 'btn btn-danger']) ?>
-    <?= Html::endForm() ?>
-</p>
+    <h1><?= Html::encode($this->title) ?></h1>
+    <p>
+        <?= Html::a('Create Notas', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::beginForm(['export-pdf'], 'post') ?>
+            <?= Html::submitButton('Exportar a PDF', ['class' => 'btn btn-danger']) ?>
+        <?= Html::endForm() ?>
+    </p>
+    <p>
+        <?=Html::a('Exportar a Excel', ['notas/exportar-excel'], ['class' => 'btn btn-success']);?>
+        <?= Html::a('Crear Notas', ['create'], ['class' => 'btn btn-primary']) ?>
+    </p>
 
-<?php // echo $this->render('_search', ['model' => $searchModel]); ?>
+    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
-<?= GridView::widget([
-    'dataProvider' => $dataProvider,
-    'filterModel' => $searchModel,
-    'columns' => [
-        ['class' => 'yii\grid\SerialColumn'],
-        [
-            'attribute' => 'estudiante_id',
-            'value' => function ($model) {
-                return $model->estudiante ? $model->estudiante->nombre . ' ' . $model->estudiante->apellido : '—';
-            },
-            'label' => 'Estudiante',
+    <?= GridView::widget([
+        'dataProvider' => $dataProvider,
+        'filterModel' => $searchModel,
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+
+            
+            [
+                'attribute' => 'estudiante_id',
+                'value' => function ($model) {
+                    return $model->estudiante ? $model->estudiante->nombre . ' ' . $model->estudiante->apellido : '—';
+                },
+                'label' => 'Estudiante',
+            ],
+            [
+                'attribute' => 'materia_id',
+                'value' => function ($model) {
+                    return $model->materia ? $model->materia->nombre : '—';
+                },
+                'label' => 'Materias',
+            ],
+          
+            'nota',
+            'fecha',
+            [
+                'class' => ActionColumn::className(),
+                'urlCreator' => function ($action, Notas $model, $key, $index, $column) {
+                    return Url::toRoute([$action, 'id' => $model->id]);
+                 }
+            ],
+
         ],
         [
             'attribute' => 'materia_id',

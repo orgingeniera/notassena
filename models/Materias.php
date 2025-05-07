@@ -59,5 +59,8 @@ class Materias extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Notas::class, ['materia_id' => 'id']);
     }
-
+    public function getPromedioNotas()
+    {
+        return $this->getNotas()->average('nota'); // Suponiendo que el campo se llama 'nota'
+    }
 }
