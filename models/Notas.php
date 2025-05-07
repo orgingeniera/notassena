@@ -1,7 +1,8 @@
 <?php
 
-namespace app\models;
 
+namespace app\models;
+use yii\db\ActiveRecord;
 use Yii;
 
 /**
@@ -12,9 +13,9 @@ use Yii;
  * @property int $materia_id
  * @property float $nota
  * @property string $fecha
+ * @property string|null $comentarios
  *
  * @property Estudiantes $estudiante
- * @property Materias $materia
  */
 class Notas extends \yii\db\ActiveRecord
 {
@@ -34,12 +35,13 @@ class Notas extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['estudiante_id', 'materia_id', 'nota', 'fecha'], 'required'],
+            [['comentarios'], 'default', 'value' => null],
+            [['estudiante_id', 'materia_id', 'nota'], 'required'],
             [['estudiante_id', 'materia_id'], 'integer'],
             [['nota'], 'number'],
             [['fecha'], 'safe'],
+            [['comentarios'], 'string'],
             [['estudiante_id'], 'exist', 'skipOnError' => true, 'targetClass' => Estudiantes::class, 'targetAttribute' => ['estudiante_id' => 'id']],
-            [['materia_id'], 'exist', 'skipOnError' => true, 'targetClass' => Materias::class, 'targetAttribute' => ['materia_id' => 'id']],
         ];
     }
 
@@ -54,6 +56,7 @@ class Notas extends \yii\db\ActiveRecord
             'materia_id' => 'Materia ID',
             'nota' => 'Nota',
             'fecha' => 'Fecha',
+            
         ];
     }
 
@@ -65,16 +68,15 @@ class Notas extends \yii\db\ActiveRecord
     public function getEstudiante()
     {
         return $this->hasOne(Estudiantes::class, ['id' => 'estudiante_id']);
+       
     }
-
-    /**
-     * Gets query for [[Materia]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
+    
     public function getMateria()
-    {
-        return $this->hasOne(Materias::class, ['id' => 'materia_id']);
-    }
+{
+    return $this->hasOne(Materias::class, ['id' => 'materia_id']);
+    return $this->hasOne(\app\models\Materias::class, ['id' => 'materia_id']);
+    
+}
+
 
 }
