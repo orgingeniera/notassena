@@ -9,6 +9,18 @@ use yii\widgets\ActiveForm;
 ?>
 
 <div class="notas-form">
+<?php if ($model->hasErrors()): ?>
+    <div class="alert alert-danger">
+        <strong>¡Atención!</strong> Corrige los siguientes errores:
+        <ul>
+            <?php foreach ($model->getErrors() as $errors): ?>
+                <?php foreach ($errors as $error): ?>
+                    <li><?= $error ?></li>
+                <?php endforeach; ?>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>
 
     <?php $form = ActiveForm::begin(); ?>
 

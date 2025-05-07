@@ -36,10 +36,16 @@ class Notas extends \yii\db\ActiveRecord
         return [
             [['estudiante_id', 'materia_id', 'nota', 'fecha'], 'required'],
             [['estudiante_id', 'materia_id'], 'integer'],
-            [['nota'], 'number'],
+    
+
+            ['nota', 'number', 'min' => 0.00, 'max' => 5.00, 'tooSmall' => 'La nota mínima es 0.00.', 'tooBig' => 'La nota máxima es 5.00.'],
+    
             [['fecha'], 'safe'],
+    
             [['estudiante_id'], 'exist', 'skipOnError' => true, 'targetClass' => Estudiantes::class, 'targetAttribute' => ['estudiante_id' => 'id']],
             [['materia_id'], 'exist', 'skipOnError' => true, 'targetClass' => Materias::class, 'targetAttribute' => ['materia_id' => 'id']],
+    
+            [['estudiante_id', 'materia_id'], 'unique', 'targetAttribute' => ['estudiante_id', 'materia_id'], 'message' => 'Este estudiante ya tiene una nota registrada en esta materia.'],
         ];
     }
 
