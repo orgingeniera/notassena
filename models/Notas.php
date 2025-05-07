@@ -50,8 +50,8 @@ class Notas extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'estudiante_id' => 'Estudiante ID',
-            'materia_id' => 'Materia ID',
+            'estudiante_id' => 'Estudiante ',
+            'materia_id' => 'Materia ',
             'nota' => 'Nota',
             'fecha' => 'Fecha',
         ];

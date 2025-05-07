@@ -13,12 +13,14 @@ use yii\grid\GridView;
 $this->title = 'Notas';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
+
 <div class="notas-index">
 
     <h1><?= Html::encode($this->title) ?></h1>
-
+    
     <p>
-        <?= Html::a('Create Notas', ['create'], ['class' => 'btn btn-success']) ?>
+        <?=Html::a('Exportar a Excel', ['notas/exportar-excel'], ['class' => 'btn btn-success']);?>
+        <?= Html::a('Crear Notas', ['create'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -29,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
+            
             [
                 'attribute' => 'estudiante_id',
                 'value' => function ($model) {
