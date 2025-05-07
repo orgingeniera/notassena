@@ -12,6 +12,10 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 
+use app\models\Estudiantes;
+use app\models\Materias;
+use yii\helpers\ArrayHelper; // Asegúrate de incluir ArrayHelper
+
 /**
  * NotasController implements the CRUD actions for Notas model.
  */
@@ -134,19 +138,23 @@ class NotasController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Notas();
+        $model = new \app\models\Notas();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'id' => $model->id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        // Obtener la lista de estudiantes y materias
+        $estudiantes = ArrayHelper::map(Estudiantes::find()->all(), 'id', 'nombre');
+        $materias = ArrayHelper::map(Materias::find()->all(), 'id', 'nombre');
+
+        // Verificar si el formulario fue enviado y procesar los datos
+        if ($model->load($this->request->post()) && $model->save()) {
+            // Si el modelo se guarda correctamente, redirigir al view
+            return $this->redirect(['view', 'id' => $model->id]);
         }
 
+        // Si no se guardó, mostrar el formulario
         return $this->render('create', [
             'model' => $model,
-            
+            'estudiantes' => $estudiantes,
+            'materias' => $materias,
         ]);
     }
 

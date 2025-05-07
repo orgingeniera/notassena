@@ -12,8 +12,6 @@ use Yii;
  * @property string $apellido
  * @property string|null $fecha_nacimiento
  * @property string|null $email
- *
- * @property Notas[] $notas
  */
 class Estudiantes extends \yii\db\ActiveRecord
 {
@@ -25,6 +23,13 @@ class Estudiantes extends \yii\db\ActiveRecord
     public static function tableName()
     {
         return 'estudiantes';
+    }
+
+
+    public function getNotas()
+    {
+        return $this->hasMany(Notas::class, ['estudiante_id' => 'id'])->with('materia');
+        return $this->hasMany(\app\models\Notas::class, ['estudiante_id' => 'id'])->with('materia');
     }
 
     /**
@@ -54,14 +59,5 @@ class Estudiantes extends \yii\db\ActiveRecord
         ];
     }
 
-    /**
-     * Gets query for [[Notas]].
-     *
-     * @return \yii\db\ActiveQuery
-     */
-    public function getNotas()
-    {
-        return $this->hasMany(Notas::class, ['estudiante_id' => 'id']);
-    }
-
 }
+
