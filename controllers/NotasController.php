@@ -7,6 +7,10 @@ use app\models\NotasSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use kartik\mpdf\Pdf;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;   
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 use app\models\Estudiantes;
 use app\models\Materias;
@@ -17,6 +21,42 @@ use yii\helpers\ArrayHelper; // Asegúrate de incluir ArrayHelper
  */
 class NotasController extends Controller
 {
+
+    public function actionExportarExcel()
+    {
+        $notas = \app\models\Notas::find()->with(['estudiante', 'materia'])->all();
+    
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+    
+        // Encabezados
+        $sheet->setCellValue('A1', 'ID');
+        $sheet->setCellValue('B1', 'Estudiante');
+        $sheet->setCellValue('C1', 'Materia');
+        $sheet->setCellValue('D1', 'Nota');
+        $sheet->setCellValue('E1', 'Fecha');
+    
+        // Datos
+        $fila = 2;
+        foreach ($notas as $nota) {
+            $sheet->setCellValue('A' . $fila, $nota->id);
+            $sheet->setCellValue('B' . $fila, $nota->estudiante->nombre ?? 'N/A');
+            $sheet->setCellValue('C' . $fila, $nota->materia->nombre ?? 'N/A');
+            $sheet->setCellValue('D' . $fila, $nota->nota);
+            $sheet->setCellValue('E' . $fila, $nota->fecha);
+            $fila++;
+        }
+    
+        // Descargar el archivo
+        $nombreArchivo = 'notas_' . date('Ymd_His') . '.xlsx';
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header("Content-Disposition: attachment;filename=\"$nombreArchivo\"");
+        header('Cache-Control: max-age=0');
+    
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
     /**
      * @inheritDoc
      */
@@ -29,6 +69,7 @@ class NotasController extends Controller
                     'class' => VerbFilter::className(),
                     'actions' => [
                         'delete' => ['POST'],
+                        'export-pdf' => ['POST'], // Agregamos la acción para exportar a PDF
                     ],
                 ],
             ]
@@ -49,6 +90,32 @@ class NotasController extends Controller
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
+    }
+
+    public function actionExportPdf()
+    {
+        $searchModel = new NotasSearch();
+        $dataProvider = $searchModel->search($this->request->queryParams);
+
+        $content = $this->renderPartial('_reporte_notas', [
+            'dataProvider' => $dataProvider,
+        ]);
+
+        $pdf = new Pdf([
+            'mode' => Pdf::MODE_CORE, // 'UTF-8'
+            'format' => Pdf::FORMAT_A4,
+            'orientation' => Pdf::ORIENT_PORTRAIT,
+            'destination' => Pdf::DEST_DOWNLOAD,
+            'content' => $content,
+            'cssFile' => '@webroot/css/pdf.css', // Opcional: archivo CSS para el PDF
+            'options' => ['title' => 'Reporte de Notas'],
+            'methods' => [
+                'SetHeader' => ['Reporte de Notas'],
+                'SetFooter' => ['|Página {PAGENO}|'],
+            ]
+        ]);
+
+        return $pdf->render();
     }
 
     /**

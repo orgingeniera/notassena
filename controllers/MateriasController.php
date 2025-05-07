@@ -117,6 +117,18 @@ class MateriasController extends Controller
     }
 
     /**
+     * CCCCCCCCCC.
+
+     */
+    public function actionMateriasPromedios()
+    {
+        $materias = Materias::find()->all();
+
+        return $this->render('materias-promedios', [
+            'materias' => $materias,
+        ]);
+    }
+    /**
      * Finds the Materias model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param int $id ID
